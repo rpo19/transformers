@@ -3839,6 +3839,10 @@ class GenerationMixin:
                 next_token_hits_stopping_criteria=next_token_hits_stopping_criteria,
                 num_beams=num_beams,
             )
+            if 'constrained_state' in model_kwargs.get('kwargs', {}):
+                model_kwargs['kwargs']['constrained_state'].beam_scores = running_beam_scores
+                model_kwargs['kwargs']['constrained_state'].beam_next_tokens = running_sequences
+                model_kwargs['kwargs']['constrained_state'].beam_idx = running_beam_indices
 
             # f. Update the completed beams if a new high score in a finished sequence is found
             sequences, beam_scores, beam_indices, is_sent_finished = self._update_finished_beams(
