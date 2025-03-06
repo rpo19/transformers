@@ -3544,6 +3544,8 @@ class GenerationMixin:
             beam_idx = beam_outputs["next_beam_indices"]
 
             if 'constrained_state' in model_kwargs.get('kwargs', {}):
+                model_kwargs['kwargs']['constrained_state'].beam_scores = beam_scores
+                model_kwargs['kwargs']['constrained_state'].beam_next_tokens = beam_next_tokens
                 model_kwargs['kwargs']['constrained_state'].beam_idx = beam_idx
 
             input_ids = torch.cat([input_ids[beam_idx, :], beam_next_tokens.unsqueeze(-1)], dim=-1)
