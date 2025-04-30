@@ -4158,10 +4158,6 @@ class GenerationMixin(ContinuousMixin):
                 next_token_hits_stopping_criteria=next_token_hits_stopping_criteria,
                 num_beams=num_beams,
             )
-            if 'constrained_state' in model_kwargs.get('kwargs', {}):
-                model_kwargs['kwargs']['constrained_state'].beam_scores = running_beam_scores
-                model_kwargs['kwargs']['constrained_state'].beam_next_tokens = running_sequences
-                model_kwargs['kwargs']['constrained_state'].beam_idx = running_beam_indices
 
             # f. Update the completed beams if a new high score in a finished sequence is found
             sequences, beam_scores, beam_indices, is_sent_finished = self._update_finished_beams(
@@ -4180,6 +4176,10 @@ class GenerationMixin(ContinuousMixin):
                 length_penalty=length_penalty,
                 early_stopping=early_stopping,
             )
+
+            if 'constrained_state' in model_kwargs.get('kwargs', {}):
+                model_kwargs['kwargs']['constrained_state'].beam_sent_finished = is_sent_finished
+                model_kwargs['kwargs']['constrained_state'].beam_idx = running_beam_indices
 
             # g. Prepare remaining data for the next iteration, including computing the stopping condition for
             # beam search as a whole (as opposed to individual beams, i.e. `stopping_criteria`)
